@@ -1,24 +1,5 @@
 import 'dart:io';
 
-/**
- * Implement a Mobile Development Committee Management System.
- * The System  already has a list of members included in it initially. 
- * This list is  saved into variable. 
- * Each member  has an id (identification number), a name , age, Faculty . 
- * Implement this application by using the previous concepts we knew . 
- * The user menu displays the following operations: 
- * Note: Each operation in the menu should call a function. 
- * - add a member (id, name, age,faculty).  (You should save changes into main list at the end) 
- * - Delete a member by id (you should save changes into main list at the end) 
- * - Search a member by id and display his data using linear search  recursively. If not exist, display “Not found”. 
- * - Search a member  by name and display his data using binary search. If not  exist, display “Not found”. (Hint: your data should be sorted before you start search). 
- * - Display all members sorted by name, and their corresponding data. 
- * - Display all members unsorted, their ids, names , age and faculty  (as entered) After each operation,  
- * Ask the user if he wants to perform any additional operation 
- * o If yes, let him choose another operation. 
- * o If no, exit from the program
- */
-
 List<Map<String, dynamic>> db = [
   {
     "id": 1,
@@ -47,28 +28,35 @@ List<Map<String, dynamic>> db = [
 ];
 
 bool addMember(){
-  print("enter member id");
+  print("# enter member id");
   int? id = int.tryParse(stdin.readLineSync()!);
-  print("enter member name");
+  print("# enter member name");
   String name = stdin.readLineSync()!;
-  print("enter member age");
+  print("# enter member age");
   int? age = int.tryParse(stdin.readLineSync()!);
-  print("enter member faculty");
+  print("# enter member faculty");
   String faculty = stdin.readLineSync()!;
-  Map<String, dynamic> member = {
-    "id": id,
-    "name" : name,
-    "age": age,
-    "faculty": faculty
-  };
-
-  for(var element in db) {
-    if (element["id"] == id || element["name"] == name) {
-      return false;
-    }
-  };
-  db.add(member);
-  return true;
+  if(id != null || age != null)
+  {
+    Map<String, dynamic> member = {
+      "id": id,
+      "name" : name,
+      "age": age,
+      "faculty": faculty
+    };
+  
+    for(var element in db) {
+      if (element["id"] == id || element["name"] == name) {
+        return false;
+      }
+    };
+    db.add(member);
+    return true;
+  }
+  else
+  {
+    return false;
+  }
 }
 
 void printList(){
@@ -91,18 +79,16 @@ void printAtIndex(int index){
 void searchByName(){
   print("enter member name");
   String name = stdin.readLineSync()!;
-  var flag = 0;
-  int? index;
+  bool f = false;
   for(int i = 0; i < db.length ; i++) { 
-    if (db[i]["name"].toLowerCase() == name.toLowerCase()) {
-      flag = 1;
-      index = i;
-      break;
+    if (db[i]["name"].toLowerCase() == name.toLowerCase() || db[i]["name"].toLowerCase().contains(name.toLowerCase())) {      
+      printAtIndex(i);
+      f = true;
     }else{
-      flag = 0;
+      f = false;
     }
    };
-   flag ==  1? printAtIndex(index!): print("Sorry! This member doesn't exist");
+   f? " ": print("Sorry! This member doesn't exist");
 }
 void searchById(){
   print("enter member id");
@@ -127,7 +113,8 @@ void sortByName(){
   return member1["name"].split(' ')[1].compareTo(member2["name"].split(' ')[1]);
 });
 }
-void menu(){
+
+void main(){
   print("Welcome to Minders\n\n");
   print("Choose an operation: \n");
   var options = 
@@ -147,8 +134,12 @@ void menu(){
     switch (choice) {
       case "1": 
         {
-          addMember()? print("Added Successfully"): print("This ID is already exist");
-          printList();
+          if (addMember()) {
+            print("Added Successfully\n");
+            printList();
+          } 
+          else 
+            print("Member can't be added");;
           break;
         }
       case "2": 
@@ -172,17 +163,10 @@ void menu(){
       case "7":
         print("See U later ^_^");
         break loop1;
-        
       default:
       print("Wrong Choice");
     }
     print("\n$options");
     choice = stdin.readLineSync()!;
   }
-}
-
-
-
-void main(){
-  menu();
 }
